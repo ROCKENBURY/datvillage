@@ -78,9 +78,42 @@ O Vercel vai gerar uma URL pública (ex: `datvillage.vercel.app`) onde qualquer 
 
 **Dica**: cada vez que você fizer `git push`, o Vercel atualiza automaticamente.
 
+## Setup Supabase (backend)
+
+O DatVillage usa [Supabase](https://supabase.com) para autenticação e persistência de dados (inventário, posição, propriedades).
+
+### 1. Crie um projeto no Supabase
+- Acesse [supabase.com](https://supabase.com) → **New Project**
+- Nome: `datvillage-prod`
+- Escolha uma senha para o banco e a região mais próxima
+- Aguarde o projeto ser provisionado (~30 segundos)
+
+### 2. Pegue as credenciais
+- No dashboard do projeto, vá em **Settings → API**
+- Copie a **Project URL** (ex: `https://xxxxx.supabase.co`)
+- Copie a **anon public key** (começa com `eyJ...`)
+
+### 3. Configure as variáveis de ambiente
+```bash
+cp .env.local.example .env.local
+```
+Edite `.env.local` e cole a URL e a anon key.
+
+Para deploy no Vercel: **Settings → Environment Variables** → adicione `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`.
+
+### 4. Crie as tabelas
+No dashboard do Supabase, vá em **SQL Editor** e rode os 3 scripts na ordem:
+1. `supabase/001_create_tables.sql` — cria as 5 tabelas
+2. `supabase/002_rls_policies.sql` — ativa Row Level Security
+3. `supabase/003_seed_items.sql` — popula o catálogo de itens
+
+### 5. Habilite autenticação
+No Supabase dashboard → **Authentication → Providers** → habilite **Email** (já vem ativo por padrão).
+
 ## Tecnologias
 
 - [Vite](https://vite.dev/) + React + TypeScript
 - [Three.js](https://threejs.org/) via [@react-three/fiber](https://docs.pmnd.rs/react-three-fiber)
 - [@react-three/drei](https://github.com/pmndrs/drei) — helpers (Sky, etc.)
 - [@react-three/rapier](https://github.com/pmndrs/react-three-rapier) — física e colisão
+- [Supabase](https://supabase.com) — autenticação, banco de dados e RLS
