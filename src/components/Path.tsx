@@ -24,7 +24,7 @@ function PathSegment({
       receiveShadow
     >
       <planeGeometry args={[width, length]} />
-      <meshStandardMaterial color="#BFA47A" roughness={0.95} />
+      <meshStandardMaterial color="#BFA47A" roughness={0.95} metalness={0} />
     </mesh>
   )
 }

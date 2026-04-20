@@ -9,37 +9,36 @@ import PostProcessing from './components/PostProcessing'
 import DynamicSky from './components/DynamicSky'
 import TimeSlider from './components/TimeSlider'
 import AmbientSound from './components/AmbientSound'
+import SplashScreen from './components/SplashScreen'
 
 /**
  * Componente raiz da aplicação.
  *
- * O DynamicSky agora gerencia céu, fog, luzes e estrelas — tudo reativo
- * ao timeOfDay controlado pelo slider. Substitui as luzes e Sky estáticos.
+ * Splash screen cobre a cena até o clique inicial.
+ * Canvas usa PCFSoftShadowMap para sombras com borda suave.
+ * FOV ajustado para 65 — mais imersivo que o padrão.
  */
 export default function App() {
   return (
     <>
+      {/* Splash screen — cobre tudo até o clique, depois faz fade out */}
+      <SplashScreen />
+
       <HUD />
       <TimeSlider />
-      {/* Som ambiente — vento, pássaros e ambiência (inicia no primeiro clique) */}
       <AmbientSound />
 
       <Canvas
-        shadows
-        camera={{ fov: 70, near: 0.1, far: 200 }}
+        shadows={{ type: THREE.PCFSoftShadowMap }}
+        camera={{ fov: 65, near: 0.1, far: 200 }}
         style={{ width: '100vw', height: '100vh' }}
         gl={{
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.1,
         }}
       >
-        {/* Céu dinâmico — controla sol, luzes, fog, estrelas e lens flare */}
         <DynamicSky />
-
-        {/* Pós-processamento — bloom, AO, vinheta, grain */}
         <PostProcessing />
-
-        {/* Sistema de interação — raycaster + detecção de alvo */}
         <InteractionSystem />
 
         <Physics gravity={[0, -9.81, 0]}>

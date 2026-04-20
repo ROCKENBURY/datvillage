@@ -3,11 +3,8 @@ import { useInteractionStore } from '../store/interactionStore'
 /**
  * Interface visual (HUD) exibida sobre o jogo.
  *
- * Contém:
- * - Crosshair central: ponto de 4px com borda escura
- * - Tooltip de interação: aparece quando mirando objeto interativo
- * - Caixa de diálogo: exibida ao interagir com placas
- * - Instruções de controle no canto inferior esquerdo
+ * Crosshair agora é círculo vazado 8px — mais sutil e profissional.
+ * Tooltip de interação, caixa de diálogo e controles mantidos.
  */
 export default function HUD() {
   const currentTarget = useInteractionStore((s) => s.currentTarget)
@@ -17,22 +14,21 @@ export default function HUD() {
   return (
     <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 10 }}>
 
-      {/* Crosshair — ponto central de 4px com borda escura para contraste */}
+      {/* Crosshair — círculo vazado, 8px, borda branca 1px, alpha 0.6 */}
       <div
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
-          width: 4,
-          height: 4,
+          width: 8,
+          height: 8,
           borderRadius: '50%',
-          background: 'white',
+          border: '1px solid rgba(255,255,255,0.6)',
           transform: 'translate(-50%, -50%)',
-          boxShadow: '0 0 2px rgba(0,0,0,0.8)',
         }}
       />
 
-      {/* Tooltip de interação — aparece quando mirando algo interativo */}
+      {/* Tooltip de interação */}
       {currentTarget && !dialogOpen && (
         <div
           style={{
@@ -53,7 +49,7 @@ export default function HUD() {
         </div>
       )}
 
-      {/* Caixa de diálogo — exibida ao interagir com placas */}
+      {/* Caixa de diálogo */}
       {dialogOpen && (
         <div
           style={{
@@ -81,7 +77,7 @@ export default function HUD() {
         </div>
       )}
 
-      {/* Instruções de controle — canto inferior esquerdo */}
+      {/* Instruções de controle */}
       <div
         style={{
           position: 'absolute',
@@ -89,9 +85,9 @@ export default function HUD() {
           left: 20,
           color: 'white',
           fontFamily: 'monospace',
-          fontSize: 14,
-          background: 'rgba(0,0,0,0.5)',
-          padding: '12px 16px',
+          fontSize: 13,
+          background: 'rgba(0,0,0,0.45)',
+          padding: '10px 14px',
           borderRadius: 8,
           lineHeight: 1.6,
         }}

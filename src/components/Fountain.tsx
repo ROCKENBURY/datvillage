@@ -92,7 +92,7 @@ export default function Fountain({ position }: FountainProps) {
         {/* Base da fonte — pedra com tom quente */}
         <mesh position={[0, 0.3, 0]} receiveShadow castShadow>
           <cylinderGeometry args={[1.2, 1.4, 0.6, 16]} />
-          <meshStandardMaterial color="#A8998A" roughness={0.9} />
+          <meshStandardMaterial color="#A8998A" roughness={0.85} metalness={0} />
         </mesh>
 
         {/* Borda elevada da fonte */}

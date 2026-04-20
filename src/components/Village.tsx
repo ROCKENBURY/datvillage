@@ -9,6 +9,8 @@ import FogPlanes from './FogPlanes'
 import DustParticles from './DustParticles'
 import ChimneySmoke from './ChimneySmoke'
 import Birds from './Birds'
+import Flowers from './Flowers'
+import Fireflies from './Fireflies'
 
 /**
  * Vilarejo completo — versão com atmosfera.
@@ -26,10 +28,14 @@ export default function Village() {
       <VillagePaths />
       <Bushes />
 
+      {/* === DECORAÇÃO === */}
+      <Flowers />
+
       {/* === ATMOSFERA === */}
       <FogPlanes />
       <DustParticles />
       <Birds />
+      <Fireflies />
 
       {/* === FONTE CENTRAL interativa === */}
       <Fountain position={[0, 0, 0]} />
