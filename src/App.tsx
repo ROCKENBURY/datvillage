@@ -1,5 +1,4 @@
 import { Canvas } from '@react-three/fiber'
-import { Sky } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 import * as THREE from 'three'
 import Village from './components/Village'
@@ -7,17 +6,20 @@ import Player from './components/Player'
 import HUD from './components/HUD'
 import InteractionSystem from './components/InteractionSystem'
 import PostProcessing from './components/PostProcessing'
+import DynamicSky from './components/DynamicSky'
+import TimeSlider from './components/TimeSlider'
 
 /**
  * Componente raiz da aplicação.
  *
- * Inclui o InteractionSystem dentro do Canvas — gerencia raycaster
- * e detecção de objetos interativos a cada frame.
+ * O DynamicSky agora gerencia céu, fog, luzes e estrelas — tudo reativo
+ * ao timeOfDay controlado pelo slider. Substitui as luzes e Sky estáticos.
  */
 export default function App() {
   return (
     <>
       <HUD />
+      <TimeSlider />
 
       <Canvas
         shadows
@@ -28,38 +30,8 @@ export default function App() {
           toneMappingExposure: 1.1,
         }}
       >
-        <fog attach="fog" args={['#D4E4F0', 40, 150]} />
-
-        <Sky
-          sunPosition={[30, 8, -40]}
-          turbidity={8}
-          rayleigh={2}
-          mieCoefficient={0.005}
-          mieDirectionalG={0.8}
-        />
-
-        <ambientLight color="#FAF0E0" intensity={0.5} />
-
-        <directionalLight
-          color="#FFE4B5"
-          position={[15, 20, 10]}
-          intensity={1.4}
-          castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          shadow-camera-far={50}
-          shadow-camera-left={-25}
-          shadow-camera-right={25}
-          shadow-camera-top={25}
-          shadow-camera-bottom={-25}
-          shadow-bias={-0.0005}
-        />
-
-        <directionalLight
-          color="#B0C4DE"
-          position={[-10, 10, -15]}
-          intensity={0.3}
-        />
+        {/* Céu dinâmico — controla sol, luzes, fog, estrelas e lens flare */}
+        <DynamicSky />
 
         {/* Pós-processamento — bloom, AO, vinheta, grain */}
         <PostProcessing />
