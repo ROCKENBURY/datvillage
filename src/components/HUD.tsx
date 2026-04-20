@@ -1,20 +1,43 @@
 import { useInteractionStore } from '../store/interactionStore'
+import { useAuth } from '../hooks/useAuth'
 
 /**
  * Interface visual (HUD) exibida sobre o jogo.
  *
- * Crosshair agora é círculo vazado 8px — mais sutil e profissional.
- * Tooltip de interação, caixa de diálogo e controles mantidos.
+ * Inclui botão "Sair" no canto superior direito para logout.
  */
 export default function HUD() {
   const currentTarget = useInteractionStore((s) => s.currentTarget)
   const dialogOpen = useInteractionStore((s) => s.dialogOpen)
   const dialogText = useInteractionStore((s) => s.dialogText)
+  const { signOut } = useAuth()
 
   return (
     <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 10 }}>
 
-      {/* Crosshair — círculo vazado, 8px, borda branca 1px, alpha 0.6 */}
+      {/* Botão Sair — canto superior direito, discreto */}
+      <button
+        onClick={signOut}
+        style={{
+          position: 'absolute',
+          top: 20,
+          right: 200,
+          pointerEvents: 'auto',
+          background: 'rgba(0,0,0,0.4)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          borderRadius: 6,
+          color: 'rgba(255,255,255,0.6)',
+          fontSize: 12,
+          fontFamily: 'sans-serif',
+          padding: '6px 12px',
+          cursor: 'pointer',
+          letterSpacing: 0.5,
+        }}
+      >
+        Sair
+      </button>
+
+      {/* Crosshair — círculo vazado */}
       <div
         style={{
           position: 'absolute',

@@ -9,21 +9,36 @@ import PostProcessing from './components/PostProcessing'
 import DynamicSky from './components/DynamicSky'
 import TimeSlider from './components/TimeSlider'
 import AmbientSound from './components/AmbientSound'
-import SplashScreen from './components/SplashScreen'
+import LoginScreen from './components/auth/LoginScreen'
+import LoadingScreen from './components/auth/LoadingScreen'
+import { useAuth } from './hooks/useAuth'
 
 /**
  * Componente raiz da aplicação.
  *
- * Splash screen cobre a cena até o clique inicial.
- * Canvas usa PCFSoftShadowMap para sombras com borda suave.
- * FOV ajustado para 65 — mais imersivo que o padrão.
+ * Fluxo de auth:
+ * 1. Sem sessão → LoginScreen (fullscreen, sem Canvas)
+ * 2. Sessão ativa mas player carregando → LoadingScreen
+ * 3. Tudo pronto → Canvas 3D com o jogo
+ *
+ * Nota: SplashScreen removida — LoginScreen agora é a primeira tela.
  */
 export default function App() {
+  const { user, isAuthenticated, loading } = useAuth()
+
+  /* Sem sessão → tela de login */
+  if (!user) {
+    return <LoginScreen />
+  }
+
+  /* Sessão ativa, mas dados do player ainda carregando */
+  if (loading || !isAuthenticated) {
+    return <LoadingScreen />
+  }
+
+  /* Tudo pronto → renderiza o jogo */
   return (
     <>
-      {/* Splash screen — cobre tudo até o clique, depois faz fade out */}
-      <SplashScreen />
-
       <HUD />
       <TimeSlider />
       <AmbientSound />

@@ -10,3 +10,14 @@ html, body, #root {
   height: 100%;
   overflow: hidden;
 }
+
+/* Animação de fade-in usada nas telas de auth */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Focus dourado nos inputs de auth */
+input:focus {
+  border-color: #FFE4B5 !important;
+}
