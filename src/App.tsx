@@ -8,6 +8,7 @@ import InteractionSystem from './components/InteractionSystem'
 import PostProcessing from './components/PostProcessing'
 import DynamicSky from './components/DynamicSky'
 import TimeSlider from './components/TimeSlider'
+import AmbientSound from './components/AmbientSound'
 
 /**
  * Componente raiz da aplicação.
@@ -20,6 +21,8 @@ export default function App() {
     <>
       <HUD />
       <TimeSlider />
+      {/* Som ambiente — vento, pássaros e ambiência (inicia no primeiro clique) */}
+      <AmbientSound />
 
       <Canvas
         shadows

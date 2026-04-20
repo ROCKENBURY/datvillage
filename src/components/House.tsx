@@ -15,6 +15,8 @@ interface HouseProps {
   scale?: number
   scaleY?: number
   rotationY?: number
+  /** Adiciona chaminé no topo da casa (para fumaça) */
+  chimney?: boolean
 }
 
 export default function House({
@@ -24,6 +26,7 @@ export default function House({
   scale = 1,
   scaleY = 1,
   rotationY = 0,
+  chimney = false,
 }: HouseProps) {
   return (
     <RigidBody type="fixed" colliders="cuboid" position={position}>
@@ -42,6 +45,14 @@ export default function House({
 
         {/* Porta interativa — componente separado com animação de abrir/fechar */}
         <Door position={[0, 0.5, 1.01]} />
+
+        {/* Chaminé — cilindro pequeno no topo do telhado */}
+        {chimney && (
+          <mesh position={[0.6, 3.2, -0.5]} castShadow>
+            <cylinderGeometry args={[0.12, 0.15, 0.6, 6]} />
+            <meshStandardMaterial color="#6D4C41" roughness={0.95} />
+          </mesh>
+        )}
 
         {/* Janela esquerda — vidro com leve brilho dourado (luz interna) */}
         <mesh position={[-0.6, 1.3, 1.01]}>
