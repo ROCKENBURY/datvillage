@@ -3,15 +3,16 @@ import { useFrame } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier'
 import * as THREE from 'three'
 import { useInteractionStore } from '../store/interactionStore'
+import FountainWater from './FountainWater'
 
 /**
  * Fonte de água interativa no centro do vilarejo.
  *
  * Ao pressionar E perto da fonte:
  * 1. Toca som de água gerado pela Web Audio API (ruído branco filtrado)
- * 2. Intensifica a animação da água e névoa por 3 segundos
+ * 2. Intensifica a ondulação da água e névoa por 3 segundos
  *
- * O som NÃO loopa — toca por 3s e para automaticamente.
+ * A água agora usa shader customizado com ondulação, reflexo do céu e specular.
  */
 
 interface FountainProps {
@@ -20,13 +21,11 @@ interface FountainProps {
 
 /**
  * Gera som de água usando Web Audio API.
- * Cria ruído branco, filtra com lowpass para soar como água corrente,
- * e aplica envelope de volume (fade in/out) durante 3 segundos.
+ * Ruído branco filtrado com lowpass, envelope de 3 segundos.
  */
 function playWaterSound() {
   const ctx = new AudioContext()
 
-  /* Buffer de ruído branco — 3 segundos */
   const bufferSize = ctx.sampleRate * 3
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
   const data = buffer.getChannelData(0)
@@ -37,12 +36,10 @@ function playWaterSound() {
   const source = ctx.createBufferSource()
   source.buffer = buffer
 
-  /* Filtro lowpass — suaviza o ruído pra soar como água */
   const filter = ctx.createBiquadFilter()
   filter.type = 'lowpass'
   filter.frequency.value = 800
 
-  /* Controle de volume com envelope suave */
   const gain = ctx.createGain()
   gain.gain.setValueAtTime(0, ctx.currentTime)
   gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.2)
@@ -53,18 +50,15 @@ function playWaterSound() {
   source.start()
   source.stop(ctx.currentTime + 3)
 
-  /* Limpa contexto de áudio após terminar */
   source.onended = () => ctx.close()
 }
 
 export default function Fountain({ position }: FountainProps) {
-  const waterRef = useRef<THREE.Mesh>(null)
   const mistRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
 
   const activateFountain = useInteractionStore((s) => s.activateFountain)
 
-  /* Callback de interação — toca som e ativa efeito visual */
   const handleInteract = useCallback(() => {
     playWaterSound()
     activateFountain()
@@ -73,20 +67,7 @@ export default function Fountain({ position }: FountainProps) {
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime()
     const isActive = useInteractionStore.getState().fountainActive
-
-    /* Multiplicador de intensidade — normal vs. ativado */
     const intensity = isActive ? 2.5 : 1
-
-    /* Água pulsa — mais intensamente quando ativada */
-    if (waterRef.current) {
-      waterRef.current.scale.y = 1 + Math.sin(t * 2 * intensity) * 0.1 * intensity
-      waterRef.current.position.y = 0.6 + Math.sin(t * 2 * intensity) * 0.05 * intensity
-
-      /* Muda opacidade quando ativada — água fica mais "viva" */
-      const mat = waterRef.current.material as THREE.MeshStandardMaterial
-      mat.opacity = isActive ? 0.7 : 0.45
-      mat.emissiveIntensity = isActive ? 0.25 : 0.08
-    }
 
     /* Névoa gira — mais rápido e visível quando ativada */
     if (mistRef.current) {
@@ -102,7 +83,6 @@ export default function Fountain({ position }: FountainProps) {
     <RigidBody type="fixed" colliders="cuboid" position={position}>
       <group
         ref={groupRef}
-        /* Marca a fonte inteira como interativa */
         userData={{
           interactive: true,
           interactiveName: 'fonte',
@@ -127,18 +107,8 @@ export default function Fountain({ position }: FountainProps) {
           <meshStandardMaterial color="#BEB0A0" roughness={0.8} />
         </mesh>
 
-        {/* Água — tom dourado translúcido com emissão que intensifica ao interagir */}
-        <mesh ref={waterRef} position={[0, 0.6, 0]}>
-          <sphereGeometry args={[0.9, 16, 16]} />
-          <meshStandardMaterial
-            color="#7EC8E3"
-            emissive="#FFD180"
-            emissiveIntensity={0.08}
-            transparent
-            opacity={0.45}
-            roughness={0.2}
-          />
-        </mesh>
+        {/* Água com shader customizado — ondulação, reflexo e specular */}
+        <FountainWater yPosition={0.55} radius={1.05} />
 
         {/* Névoa de chão — plano circular que gira ao redor da fonte */}
         <mesh
