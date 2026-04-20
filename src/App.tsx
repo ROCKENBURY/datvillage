@@ -6,6 +6,7 @@ import Village from './components/Village'
 import Player from './components/Player'
 import HUD from './components/HUD'
 import InteractionSystem from './components/InteractionSystem'
+import PostProcessing from './components/PostProcessing'
 
 /**
  * Componente raiz da aplicação.
@@ -59,6 +60,9 @@ export default function App() {
           position={[-10, 10, -15]}
           intensity={0.3}
         />
+
+        {/* Pós-processamento — bloom, AO, vinheta, grain */}
+        <PostProcessing />
 
         {/* Sistema de interação — raycaster + detecção de alvo */}
         <InteractionSystem />
